@@ -4,7 +4,7 @@ CC		:=	c++
 CPPFLAGS:=	-Wall -Wextra -Werror #-fsanitize=address
 CPPFLAG	:=	-std=c++98
 
-SRCS	:=	main.cpp
+SRCS	:=	main.cpp PmergeMe.cpp
 
 OBJS	:=	$(SRCS:.cpp=.o)
 
