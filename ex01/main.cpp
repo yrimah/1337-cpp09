@@ -1,28 +1,25 @@
-#include <iostream>
-
-int claculateRPN(std::string _exp, int *_status);
-int valid_exp(std::string exp);
+#include "RPN.hpp"
 
 int main(int argc, char** argv)
 {
     if (argc == 2)
     {
-        int _status = 0;
+        bool error = false;
         std::string _exp;
 
         _exp = argv[1];
-        if (valid_exp(_exp))
+        if (verifyRpn(_exp))
         {
             std::cout << "Error" << std::endl;
             return (1);
         }
-        claculateRPN(_exp, &_status);
-        if (_status)
+        rpnCalculator(_exp, &error);
+        if (error)
         {
             std::cout << "Error" << std::endl;
             return (1);
         }
-        std::cout << claculateRPN(_exp, &_status) << std::endl;
+        std::cout << rpnCalculator(_exp, &error) << std::endl;
         return (0);
     }
     else

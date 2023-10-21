@@ -1,20 +1,17 @@
-#include <iostream>
-#include <stack>
-#include <algorithm>
+#include "RPN.hpp"
 
-int valid_exp(std::string exp)
+int verifyRpn(std::string rpn_exp)
 {
     int i = 0;
-    if (!exp[i])
+
+    if (!rpn_exp[i])
         return (1);
-    while (exp[i])
+    while (rpn_exp[i])
     {
-        if (exp[i] == '+' || exp[i] == '-' || exp[i] == '/'
-            || exp[i] == '*' || exp[i] == ' '
-            || (exp[i] >= '0' && exp[i] <= '9'))
+        if (rpn_exp[i] == '+' || rpn_exp[i] == '-' || rpn_exp[i] == '/'
+            || rpn_exp[i] == '*' || rpn_exp[i] == ' ' || isdigit(rpn_exp[i]))
             {
-                if ((exp[i] >= '0' && exp[i] <= '9')
-                    && (exp[i + 1] >= '0' && exp[i + 1] <= '9'))
+                if (isdigit(rpn_exp[i]) && isdigit(rpn_exp[i + 1]))
                     return (1);
                 else
                     i++;
@@ -25,10 +22,10 @@ int valid_exp(std::string exp)
     return (0);
 }
 
-int claculateRPN(std::string _exp, int *_status)
+int rpnCalculator(std::string _exp, bool *error)
 {
-    *_status = 0;
-    std::stack<int> _opr;
+    *error = false;
+    std::stack<int> _numbers;
     size_t pos = 0;
     while (pos < _exp.size())
     {
@@ -38,63 +35,56 @@ int claculateRPN(std::string _exp, int *_status)
             int num = std::strtol(_exp.c_str() + pos, &end, 10);
             if (end == _exp.c_str() + pos)
             {
-                // Failed to convert
-                *_status = 1;
+                *error = true;
                 return (1);
             }
-            _opr.push(num);
+            _numbers.push(num);
             pos = end - _exp.c_str();
         }
         else if (_exp[pos] == ' ')
-        {
-            // Skip spaces
             pos++;
-        }
         else
         {
-            // Operator
-            if (_opr.size() < 2)
+            if (_numbers.size() < 2)
             {
-                *_status = 1;
+                *error = true;
                 return (1);
             }
-            int operand2 = _opr.top();
-            _opr.pop();
-            int operand1 = _opr.top();
-            _opr.pop();
+            int num1 = _numbers.top();
+            _numbers.pop();
+            int num2 = _numbers.top();
+            _numbers.pop();
 
             int result;
             switch (_exp[pos])
             {
                 case '+':
-                    result = operand1 + operand2;
+                    result = num2 + num1;
                     break;
                 case '-':
-                    result = operand1 - operand2;
+                    result = num2 - num1;
                     break;
                 case '*':
-                    result = operand1 * operand2;
-                    // std::cout << result << "DEBUG" << std::endl;
+                    result = num2 * num1;
                     break;
                 case '/':
-                    if (operand2 == 0)
+                    if (num1 == 0)
                     {
-                        *_status = 1;
-                        return (1); // Division by zero
+                        *error = true;
+                        return (1);
                     }
-                    result = operand1 / operand2;
+                    result = num2 / num1;
                     break;
                 default:
-                    *_status = 1;
-                    return (1); // Invalid operator
+                    *error = true;
+                    return (1);
             }
-            // std::cout << result << "DEBUG" << std::endl;
-            _opr.push(result);
+            _numbers.push(result);
             pos++;
         }
     }
-    if (_opr.size() == 1)
-        return (_opr.top());
-    *_status = 1;
+    if (_numbers.size() == 1)
+        return (_numbers.top());
+    *error = true;
     return (1);
 }
