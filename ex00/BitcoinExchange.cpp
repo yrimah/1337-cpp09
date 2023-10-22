@@ -32,9 +32,14 @@ int valid_date(std::string date, std::string *_setdate)
         return(3);
     int day = atoi(part.c_str());
 
-    if (_year <= 2009 && month == 1 && day < 2)
+    if (_year < 2009)
+        return (2);
+    if (_year == 2009 && month < 2 && day < 2)
         return (2);
     if ( _year < 0 || month < 1 || month > 12 || day < 1 || day > 31)
         return (1);
+    if (_year > 2022 || (_year == 2022 && (month > 3))
+        || (_year == 2022 && (month == 3) && day > 29))
+        return (4);
     return (0);
 }

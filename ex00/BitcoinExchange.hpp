@@ -6,7 +6,6 @@
 # include <sstream>
 # include <fstream>
 # include <map>
-# include <algorithm>
 
 int verify(std::string toVerify);
 int valid_date(std::string date, std::string *_setdate);
