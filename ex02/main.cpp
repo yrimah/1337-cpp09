@@ -4,7 +4,7 @@ int main(int argc, char **argv)
 {
     if (argc > 1)
     {
-        if (checkValidArgs(argv) || checkDuplicates(argv))
+        if (checkValidArgs(argv))// || checkDuplicates(argv))
         {
             std::cout << "Error" << std::endl;
             return (1);
@@ -137,10 +137,10 @@ int main(int argc, char **argv)
         deqPairs _deqPairs;
         int leftDeq = -1;
 
-        std::cout << "Before: ";
-        for (int i = 1; i < argc; i++)
-            std::cout << argv[i] << " ";
-        std::cout << std::endl;
+        // std::cout << "Before: ";
+        // for (int i = 1; i < argc; i++)
+        //     std::cout << argv[i] << " ";
+        // std::cout << std::endl;
 
         clock_t startDeq, endDeq;
         startDeq = clock();
@@ -258,6 +258,12 @@ int main(int argc, char **argv)
         for (i2 = _higher.begin(); i2 != _higher.end(); i2++)
             std::cout << *i2 << " ";
         std::cout << std::endl;
+
+        // std::cout << "After: ";
+        // for (i2Deq = _higherDeq.begin(); i2Deq != _higherDeq.end(); i2Deq++)
+        //     std::cout << *i2Deq << " ";
+        // std::cout << std::endl;
+
         std::cout << "Time to process a range of " << argc - 1 << " elements with std::vector : " << std::fixed << timeTakenByVec << " sec" << std::endl;
         std::cout << "Time to process a range of " << argc - 1 << " elements with std::deque : " << std::fixed << timeTakenByDeq << " sec" << std::endl;
     }
