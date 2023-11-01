@@ -10,7 +10,7 @@ int main(int argc, char** argv)
         database_file.open("data.csv", std::ios::in);
         if (!database_file.is_open())
         {
-            std::cout << "Error: could not open file." << std::endl;
+            std::cout << "Error: could not open file(database file)." << std::endl;
             return (1);
         }
         std::map<std::string, std::string> _database;
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
         _inputfile.open(argv[1], std::fstream::in);
         if (!_inputfile.is_open())
         {
-            std::cout << "Error: could not open file." << std::endl;
+            std::cout << "Error: could not open file(input file)." << std::endl;
             return (1);
         }
 
@@ -47,23 +47,40 @@ int main(int argc, char** argv)
         std::string _date = "";
         std::string _datebase = "";
 
-        _inputfile >> _tmp;
-        if (_tmp.find("date") == std::string::npos)
+        std::getline(_inputfile, _tmp);
+        std::istringstream _header(_tmp);
+        std::string  _headerStr;
+        if (std::getline(_header, _headerStr, '|'))
+        {
+            _headerStr = trimStr(_headerStr);
+            if (_headerStr != "date")
+            {
+                std::cout << "Error: Invalid input file" << std::endl;
+                _inputfile.close();
+                return (1);
+            }
+            std::getline(_header, _headerStr);
+            _headerStr = trimStr(_headerStr);
+            if (_headerStr != "value")
+            {
+                std::cout << "Error: Invalid input file" << std::endl;
+                _inputfile.close();
+                return (1);
+            }
+        }
+        else
         {
             std::cout << "Error: Invalid input file" << std::endl;
             _inputfile.close();
             return (1);
-        } 
-        std::getline(_inputfile, _tmp);
+        }
         while (std::getline(_inputfile, _tmp))
         {
-            _tmp.erase(std::remove(_tmp.begin(), _tmp.end(), '"'), _tmp.end());
-            _tmp.erase(std::remove_if(_tmp.begin(), _tmp.end(), ::isspace), _tmp.end());
-
             std::istringstream _stream_tmp(_tmp);
             if (_tmp.find('|') != std::string::npos)
             {
                 std::getline(_stream_tmp, _buff_1, '|');
+                _buff_1 = trimStr(_buff_1);
                 if (valid_date(_buff_1, &_date) && _buff_1 != "")
                 {
                     if (valid_date(_buff_1, &_date) == 2)
@@ -77,6 +94,7 @@ int main(int argc, char** argv)
                     continue;
                 }
                 std::getline(_stream_tmp, _buff_2);
+                _buff_2 = trimStr(_buff_2);
                 if (_buff_1 == "")
                 {
                     std::cout << "Error: bad input => | " << _buff_2 << std::endl;
@@ -88,12 +106,24 @@ int main(int argc, char** argv)
                     continue;
                 }
                 bool isdig = true;
-                
+                int dot = 0;
                 for (size_t i = 0; _buff_2[i]; i++)
                 {
-                    if (!isdigit(_buff_2[i]) && _buff_2[i] != '.')
+                    if (_buff_2[i] == '.')
+                        dot++;
+                    if ((_buff_2[i] == '.' &&  !_buff_2[i + 1]) || _buff_2[0] == '.')
+                    {
                         isdig = false;
+                        break;
+                    }
+                    if (!isdigit(_buff_2[i]) && _buff_2[i] != '.')
+                    {
+                        isdig = false;
+                        break;
+                    }
                 }
+                if (dot > 1)
+                    isdig = false;
                 if (atof(_buff_2.c_str()) < 0)
                 {
                     std::cout << "Error: not a positive number." << std::endl;

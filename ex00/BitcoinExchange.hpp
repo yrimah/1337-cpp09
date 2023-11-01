@@ -9,5 +9,6 @@
 
 int verify(std::string toVerify);
 int valid_date(std::string date, std::string *_setdate);
+std::string trimStr(std::string str);
 
 #endif

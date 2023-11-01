@@ -26,20 +26,28 @@ int valid_date(std::string date, std::string *_setdate)
     if (verify(part))
         return(3);
     int month = atoi(part.c_str());
-    std::getline(_stream_input, part, '-');
+    std::getline(_stream_input, part);
     *_setdate += part;
     if (verify(part))
         return(3);
     int day = atoi(part.c_str());
 
+    if ( _year < 0 || month < 1 || month > 12 || day < 1 || day > 31)
+        return (1);
     if (_year < 2009)
         return (2);
     if (_year == 2009 && month < 2 && day < 2)
         return (2);
-    if ( _year < 0 || month < 1 || month > 12 || day < 1 || day > 31)
-        return (1);
     if (_year > 2022 || (_year == 2022 && (month > 3))
         || (_year == 2022 && (month == 3) && day > 29))
         return (4);
     return (0);
+}
+
+std::string trimStr(std::string str)
+{
+    const char* typeOfWhitespaces = " \t\n\r\f\v";
+    str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
+    str.erase(0,str.find_first_not_of(typeOfWhitespaces));
+    return (str);
 }
